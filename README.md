@@ -36,10 +36,20 @@ SM_V7_2 48130368
 ...
 ~~~~~~
 
-To get significantly enriched clusters, run ./getClusters.sh
+## Enrichment without sliding blocks
 
-## Output files:
+To get significantly enriched clusters, run 
+
+    ./getClusters_nonSliding.sh
+
+### Output files:
 
 - FisherResults.txt (Fisher's Exact test results for all tests)
 - fisher_enriched.txt(Significantly enriched functions)
 - clusters_sig.pdf (chromosome plots with significant clusters)
+
+## Enrichment with sliding blocks
+
+Using 50-gene blocks with sliding 5-genes. Run 
+
+    ./getClusters_Sliding.sh
