@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## find enriched gene clusters on chromosomes
-## making 50-gene sliding blocks and test in each block functional enrichment
+## making 50-gene sliding windows and test in each block functional enrichment
 
 #### need the following input files
 
@@ -26,6 +26,7 @@
 
 ##--*--##
 #### produce files to use ####
+# total number of genes for each function (as a reference for the test)
 cat gene-func.txt | sed 's/,/ /g'|awk -v OFS='\t' '{for (i=2;i<=NF;i++) print $1,$i}'| awk '{print $2}'| sort | uniq -c | awk '{print $2, $1}'| sort > func-reference.txt
 # PF00001 91
 # PF00002 7
@@ -34,16 +35,26 @@ sort gene-chr-start.txt | join -a1 - gene-func.txt > gene-chr-func.txt
 
 
 ##--*--##
-#### make sliding gene blocks and Fisher test ####
-# split into each chromosome
+#### make sliding gene blocks and do Fisher test ####
+# split gene chrom file into each chromosome
 for i in $(awk '{print $2}' gene-chr-start.txt | sort -u); do grep $i gene-chr-start.txt > $i.txt; done
-# construct the fisher table for each sliding block
+# construct the fisher table for each sliding block, and test significance
+mkdir slidingChr/
 for i in {1..7} ZW; do ./sliding_blocks.sh SM_V7_$i.txt; done
 
-# Manually choose clusters with most genes
-cat FisherResults-*table.txt | grep SM | sort -k2,2 -k1,1 > fisher_enriched.txt
+# select clusters with most genes
+cat FisherResults-*table.txt | grep SM | sort -k2,2 -k1,1 > fisher_enriched_raw.txt
+#Block   IPR     anno_block      anno_all        nonanno_block   nonanno_all     p_value Bonferroni      Holm    FDR
+#SM_V7_1.txt-110	PF00001:7tm_1:7_transmembrane_receptor_(rhodopsin_family)	5	91	95	9708	0.0028	0.2212	0.21	0.04424Block   IPR     anno_block      anno_all        nonanno_block   nonanno_all     p_value Bonferroni      Holm    FDR
+#SM_V7_1.txt-110	PF00001:7tm_1:7_transmembrane_receptor_(rhodopsin_family)	5	91	95	9708	0.0028	0.2212	0.21	0.04424
 rm -f FisherResults*-table.txt 
 
+# get clusters with most genes
+cat fisher_enriched_raw.txt | grep SM | sort -k2,2 -k3,3n -k1,1| sed 's/\./ /' | awk '{print $3 "-" $1, $1 "." $2 "#" $4}' | awk '$1!=p{if(p)print s; p=$1; s=$0; next}{sub(p,x); s=s $0} END{print s}' | awk '{print $1, $NF}' | sed 's/-SM/ SM/; s/#/ /' | awk '{print $3, $1, $4}'| sort > fisher_enriched.txt # needs manual-check for multiple clusters on the same chromosome and duplicated clusters
+
+#SM_V7_1.txt-0 PF00169:PH:PH_domain 3
+#SM_V7_1.txt-110	PF00001:7tm_1:7_transmembrane_receptor_(rhodopsin_family)	5
+#SM_V7_1.txt-110 PF13181:TPR_8:Tetratricopeptide_repeat 3
 
 ##--*--##
 #### Plot chromosomes and clusters ####
@@ -52,8 +63,12 @@ cat fisher_enriched.txt | sed 's/:/ /'| awk '{print $1 " " $2 " " $4}'| awk -v O
 
 sh -e sigPoints-cmds.txt
 
-cat *.tab | sed 's/-/ /'> plot_func-clusters.txt
+cat *.tab | sed 's/-/ /' | awk '{print $3, $0}'| sort | join func-names.txt - | sed 's/:/ /'| awk '{print $4, $5, $2, $7, $8, $9}'| sort |sed 's/\.txt//'> plot_func-clusters.txt # file used to plot
+
+#SM_V7_1 0 PH 3 2212203 4703829
+#SM_V7_1 110 7tm_1 5 42207659 45304828
+#SM_V7_1 110 TPR_8 3 42365029 43812686
 
 rm -rf *.tab sigPoints-cmds.txt
 
-Rscript 4-plotClusters.R
+Rscript 3-plotClusters.R
