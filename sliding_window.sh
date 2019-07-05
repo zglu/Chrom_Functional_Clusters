@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# usage: ./sliding_blocks.sh [file with gene-chr-startCoord; single chromosomes]
+# usage: ./Sliding_Window.sh [file with gene-chr-startCoord; single chromosomes] [WINSIZE] [SLIDINGSIZE]
 # define your window and sliding size
-declare -i WINSIZE=100
-declare -i SLIDING=10
+declare -i WINSIZE=$2
+declare -i SLIDING=$3
 NGENES="$(wc -l $1 | awk '{print $1}')"
 NSLIDES=$(((NGENES - WINSIZE) / SLIDING))
 TOTAL="$(wc -l gene-chr-start.txt | awk '{print $1}')"

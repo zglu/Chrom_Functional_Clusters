@@ -13,7 +13,7 @@ for (i in 1:no.tests) {
   expotable<-rbind(expotable, newline)
 }
 
-colnames(expotable)<-c("Block","IPR", "anno_local", "anno_all", "nonanno_local", "nonanno_all", "p_value")
+colnames(expotable)<-c("block","func", "anno_block", "anno_all", "nonanno_block", "nonanno_all", "p_value")
 
 ## p-value adjustment for multiple comparisons ?p.adjust
 ### control of the family-wise error rate: bonferroni, holm, hochberg, hommel
@@ -23,4 +23,5 @@ expotable$Holm <- p.adjust(expotable$p_value, method = "holm")
 expotable$FDR <- p.adjust(expotable$p_value, method = "BH") # Benjamini & Hochberg
 #expotable$FDR<-NULL # drop a column
 #expotable<-expotable[order(expotable$FDR),]
-write.table(expotable, file="FisherResults.txt", row.names = F, sep="\t", quote = F)
+expotable<-expotable[ which(expotable$FDR<0.05 & expotable$anno_block>2),]
+write.table(expotable, file=paste0("FisherResults-", args[1]), row.names = F, sep="\t", quote = F)

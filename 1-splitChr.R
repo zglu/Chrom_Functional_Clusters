@@ -17,8 +17,7 @@ i<-0;
 for (i in 0:(spleng-1)) {
   blockstart<-paste("!BlockStart:", chr, ggosub[i*blockSize+1,"start"], sep=" ") # start of each 100-gene block
   testGenes<-ggosub[(i*blockSize+1):((i+1)*blockSize),"id"] # gene ids in that block
-  outfile<-paste("splitChr/", chr,"-", i+1, ".genes", sep="")
-  ## some codes for fisher's text
+  outfile<-paste("splitChr/", chr,"-", i+1, sep="")
   
   #write.table(blockstart, file=outfile, quote=F, row.names = F, col.names = F)
   write.table(testGenes, file=outfile, quote=F, row.names = F, col.names = F, append = T)
