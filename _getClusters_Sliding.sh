@@ -41,7 +41,7 @@ for i in $(awk '{print $2}' gene-chr-start.txt | sort -u); do grep $i gene-chr-s
 # and calculate for each function the number of annotated genes, to make a fisher test table
 # ** DEFINE YOUR WINDOW AND SLIDING SIZE IN sliding_window.sh **
 mkdir slidingChr/
-for i in $(cut -f1 chr-length.txt); do ./Sliding_Window.sh $i.txt $1 $2; done
+for i in $(awk '{print $1}' chr-length.txt); do ./Sliding_Window.sh $i.txt $1 $2; done
 ## delete empty table files
 find . -size  0 -print0 |xargs -0 rm --
 
@@ -61,6 +61,9 @@ cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1| sed 's/\./ /' | awk '{pri
 # block_file function genes fdr
 #SM_V7_1.txt-0 PF00169:PH 3 3e-04
 
+# check if multiple clusters on the same chromosome are omitted
+#cat plot_func-clusters_nonsliding.txt | awk '{print $1 "_" $3}'| sort | uniq -c | awk '$1>1'
+#cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1 | grep [func] | grep [chr] ... > sliding_2.txt
 
 
 ##--*--## PLOT CHROMOSOMES AND CLUSTERS ####

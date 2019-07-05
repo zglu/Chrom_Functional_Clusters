@@ -41,7 +41,7 @@ declare -i BLOCK=$1
 
 # create for each gene block a file with genes inside
 mkdir splitChr
-for i in $(cut -f1 chr-length.txt); do Rscript 1-splitChr.R $i "$BLOCK"; done
+for i in $(awk '{print $1}' chr-length.txt); do Rscript 1-splitChr.R $i "$BLOCK"; done
 
 # calculate for each function number of genes and make Fisher test table
 cd splitChr/
