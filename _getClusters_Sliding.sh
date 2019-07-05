@@ -14,12 +14,17 @@
 #2 gene-func.txt	gene and function annotations
 # Smp_000040	PF13374,PF13424
 
-#3 func-names.txt	function id and name
+#3 func-names.txt	function id and name SHOULD NOT CONTAIN ':'
 # PF00001	7tm_1
 
 #4 chr-length.txt	chromosome length
 # SM_V7_1 88881357
 
+
+if [[ $# -lt 2 ]] ; then
+    echo 'Usage: ./getClusters_Sliding.sh [WINDOWSIZE] [SLIDINGSIZE]'
+    exit 0
+fi
 
 ##--*--## PRODUCE FILES TO USE ####
 # total number of genes for each function (as a reference for the test)
@@ -35,7 +40,6 @@ for i in $(awk '{print $2}' gene-chr-start.txt | sort -u); do grep $i gene-chr-s
 # create for each sliding window a file with defined number of genes (eg. 100) 
 # and calculate for each function the number of annotated genes, to make a fisher test table
 # ** DEFINE YOUR WINDOW AND SLIDING SIZE IN sliding_window.sh **
-rm -rf slidingChr/
 mkdir slidingChr/
 for i in $(cut -f1 chr-length.txt); do ./Sliding_Window.sh $i.txt $1 $2; done
 ## delete empty table files
@@ -69,4 +73,5 @@ cat *.tab | sed 's/-/ /; s/\.txt//'|sort > plot_func-clusters_sliding.txt
 
 Rscript 3-plotClusters.R plot_func-clusters_sliding.txt
 
-rm -rf *.tab sigPoints-cmds.txt fisher_enriched_sliding.txt
+rm -rf *.tab sigPoints-cmds.txt
+rm -rf slidingChr/

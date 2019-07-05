@@ -44,6 +44,7 @@ To get significantly enriched clusters for each block, run
 
 #### Output files:
 
+- fisher_enriched_nonsliding.txt ()
 - plot_func-clusters_nonsliding.txt (Significantly enriched functions: FDR<0.05, at least 3 genes)
 - plot_func-clusters_nonsliding.txt.pdf (chromosome plots with significant clusters)
 
@@ -56,6 +57,7 @@ Using 50-gene blocks with sliding 5-genes. Run
 #### Output files:
 
 - fisher_enriched_raw.txt (raw test results for all functions and all blocks: overlapping exists) 
+- fisher_enriched_sliding.txt ()
 - plot_func-clusters_sliding.txt (Significantly enriched functions: FDR<0.05, at least 3 genes)
 - plot_func-clusters_sliding.txt.pdf (chromosome plots with significant clusters)
 

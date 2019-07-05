@@ -14,12 +14,16 @@
 #2 gene-func.txt	gene and function annotations
 # Smp_000040	PF13374,PF13424
 
-#3 func-names.txt	function id and name
+#3 func-names.txt	function id and name SHOULD NOT CONTAIN ':'
 # PF00001	7tm_1
 
 #4 chr-length.txt	chromosome length
 # SM_V7_1 88881357
 
+if [[ $# -lt 1 ]] ; then
+    echo 'Usage: ./getClusters_nonSliding.sh [BLOCKSIZE]'
+    exit 0
+fi
 
 ##--*--## PRODUCE FILES TO USE ####
 # total number of genes for each function (as a reference for the test)
@@ -36,7 +40,6 @@ TOTAL="$(wc -l gene-chr-start.txt | awk '{print $1}')"
 declare -i BLOCK=$1
 
 # create for each gene block a file with genes inside
-rm -rf splitChr/
 mkdir splitChr
 for i in $(cut -f1 chr-length.txt); do Rscript 1-splitChr.R $i "$BLOCK"; done
 
@@ -55,9 +58,6 @@ find . -size  0 -print0 |xargs -0 rm --
 ##--*--## FISHER TEST ####
 for i in *-table.txt; do Rscript ../2-Fishers_Exact_Test.R $i; done
 cat FisherResults*.txt | grep -v anno_block |awk '{print $1,$2,$3,$10}'> ../fisher_enriched_nonsliding.txt
-
-rm -rf *sum.txt *table.txt
-
 cd ../
 
 
@@ -70,5 +70,5 @@ cat *.tab | sed 's/-/ /'> plot_func-clusters_nonsliding.txt
 
 Rscript 4-plotClusters.R plot_func-clusters_nonsliding.txt
 
-rm -rf *.tab sigPoints-cmds.txt fisher_enriched_nonsliding.txt
-
+rm -rf *.tab sigPoints-cmds.txt
+rm -rf splitChr/
