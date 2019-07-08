@@ -14,15 +14,26 @@
 #2 gene-func.txt	gene and function annotations
 # Smp_000040	PF13374,PF13424
 
-#3 func-names.txt	function id and name SHOULD NOT CONTAIN ':'
+#3 func-names.txt	function id and name SHOULD NOT CONTAIN : ' or "
 # PF00001	7tm_1
 
 #4 chr-length.txt	chromosome length
 # SM_V7_1 88881357
 
+# CHECK ARGUMENTS
 if [[ $# -lt 1 ]] ; then
     echo 'Usage: ./getClusters_nonSliding.sh [BLOCKSIZE]'
     exit 0
+fi
+
+# CHECK SPECIAL CHARACTERS IN FUNC-NAMES.TXT
+if grep -q "'" func-names.txt; then
+	echo "func-names.txt contains single quotes"
+elif grep -q '"' func-names.txt; then
+	echo "func-names.txt contains double quotes"
+elif grep -q ':' func-names.txt; then
+	echo "func-names.txt contains :"
+	exit 0
 fi
 
 ##--*--## PRODUCE FILES TO USE ####
