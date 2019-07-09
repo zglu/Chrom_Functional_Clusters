@@ -44,7 +44,7 @@ To get significantly enriched clusters for each block, run
 
 #### Output files:
 
-- fisher_enriched_nonsliding.txt ()
+- fisher_enriched_nonsliding.txt (significant clusters on each chromosome)
 - plot_func-clusters_nonsliding.txt (Significantly enriched functions: FDR<0.05, at least 3 genes)
 - plot_func-clusters_nonsliding.txt.pdf (chromosome plots with significant clusters)
 
@@ -57,7 +57,13 @@ Using 50-gene blocks with sliding 5-genes. Run
 #### Output files:
 
 - fisher_enriched_raw.txt (raw test results for all functions and all blocks: overlapping exists) 
-- fisher_enriched_sliding.txt ()
+- fisher_enriched_sliding.txt (significant clusters on each chromosome)
 - plot_func-clusters_sliding.txt (Significantly enriched functions: FDR<0.05, at least 3 genes)
 - plot_func-clusters_sliding.txt.pdf (chromosome plots with significant clusters)
 
+Note that the current script is not perfect to choose the cluster with most genes. Duplicate clusters may exist and several clusters of the same function may exist but not picked. Suggest to run the non-sliding approach for a reference. 
+
+## Output plots
+
+- 3-cluster_geneCounts.R: plot the gene counts in each cluster as a bar
+- 4-cluster_geneCoord.R: plot clusters with start coordinates of the first and last genes. Shown as coloured blocks.

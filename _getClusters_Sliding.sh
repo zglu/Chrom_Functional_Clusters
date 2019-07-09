@@ -76,16 +76,18 @@ cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1| sed 's/\./ /' | awk '{pri
 # get coordinates of first and last genes in each cluster
 cat fisher_enriched_sliding.txt | sed 's/:/ /'| awk -v OFS='' '{print "cat slidingChr/", $1, " | sort | join - gene-chr-func.txt | grep ", $2, "| awk \047{print $3}\047 | sort -nk1 | awk  \047NR==1;END{print}\047 | tr \047\134n\047 \047 \047 | sed \047s/ $//\047", "|awk \047{print \042", $1, "\042, \042", $2, "\042, \042", $3, "\042, ", $4, ", ", $5, ", ","$1, $2}\047 > ", $1, "-", $2, ".tab"}' > sigPoints-cmds.txt  #Use octal escape sequences ('\047') or printf ('printf "%c", 39') to print single quote under print: \047 single quote; \042 double quote; \134 backslash
 sh -e sigPoints-cmds.txt
-cat *.tab | sed 's/-/ /; s/\.txt//'|sort > plot_func-clusters_sliding.txt
-# chr block func name genes fdr start end
-# SM_V7_1 110 PF00001 7tm_1 5 0.001 42207659 45304828
+cat *.tab | sed 's/-/ /; s/\.txt//'|sort | join - chr-length.txt > plot_func-clusters_sliding.txt
+# chr block func name genes fdr start end chrlen
+# SM_V7_1 110 PF00001 7tm_1 5 0.001 42207659 45304828 88881357
 
 # get genes in each cluster
 cat fisher_enriched_sliding.txt | sed 's/:/ /'| awk -v OFS='' '{print "cat slidingChr/", $1, " | sort | join - gene-chr-func.txt | grep ", $2, "| awk \047{print $1}\047 | tr \047\134n\047 \047,\047 > ", $1, "-", $2, ".genes"}' > get_clusterGenes.cmds
 sh -e get_clusterGenes.cmds
 
-
-Rscript 3-plotClusters.R plot_func-clusters_sliding.txt
+# plot with gene counts in each cluster
+Rscript 3-cluster_geneCounts.R plot_func-clusters_sliding.txt
+# plot with gene coordinates of each cluster
+#Rscript 4-cluster_geneCoord.R plot_func-clusters_sliding.txt
 
 rm -rf *.tab sigPoints-cmds.txt get_clusterGenes.cmds
 #rm -rf slidingChr/
