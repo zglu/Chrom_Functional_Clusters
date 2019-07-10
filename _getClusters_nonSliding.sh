@@ -36,6 +36,8 @@ elif grep -q ':' func-names.txt; then
 	exit 0
 fi
 
+
+echo "Generating files to use..."
 ##--*--## PRODUCE FILES TO USE ####
 # total number of genes for each function (as a reference for the test)
 cat gene-func.txt | sed 's/,/ /g'|awk -v OFS='\t' '{for (i=2;i<=NF;i++) print $1,$i}'|sort -u| awk '{print $2}'| sort | uniq -c | awk '{print $2, $1}'| sort > func-reference.txt
@@ -43,7 +45,7 @@ cat gene-func.txt | sed 's/,/ /g'|awk -v OFS='\t' '{for (i=2;i<=NF;i++) print $1
 sort gene-chr-start.txt | join -a1 - gene-func.txt > gene-chr-func.txt
 
 
-
+echo "Splitting chromosomes..."
 ##--*--## SPLIT CHROMOSOMES INTO GENE BLOCKS ####
 ## total number of genes to test ####
 TOTAL="$(wc -l gene-chr-start.txt | awk '{print $1}')"
@@ -65,14 +67,14 @@ for i in *sum.txt; do awk '{print FILENAME $0}' $i | sed 's/\-sum\.txt/ /' > $i-
 find . -size  0 -print0 |xargs -0 rm --
 
 
-
+echo "Testing enrichment..."
 ##--*--## FISHER TEST ####
 for i in *-table.txt; do Rscript ../2-Fishers_Exact_Test.R $i; done
 cat FisherResults*.txt | grep -v anno_block |awk '{print $1,$2,$3,$10}'> ../fisher_enriched_nonsliding.txt
 cd ../
 
 
-
+echo "Plotting clusters..."
 ##--*--## PLOT CHROMOSOMES AND CLUSTERS ####
 # get coordinates of first and last genes in each cluster
 cat fisher_enriched_nonsliding.txt | sed 's/:/ /'| awk -v OFS='' '{print "cat splitChr/", $1, " | sort | join - gene-chr-func.txt | grep ", $2, "| awk \047{print $3}\047 | sort -nk1 | awk  \047NR==1;END{print}\047 | tr \047\134n\047 \047 \047 | sed \047s/ $//\047", "|awk \047{print \042", $1, "\042, \042", $2, "\042, \042", $3, "\042, ", $4, ", ", $5, ", ","$1, $2}\047 > ", $1, "-", $2, ".tab"}' > sigPoints-cmds.txt  #Use octal escape sequences ('\047') or printf ('printf "%c", 39') to print single quote under print: \047 single quote; \042 double quote; \134 backslash
@@ -86,3 +88,5 @@ Rscript 4-cluster_geneCoord.R plot_func-clusters_sliding.txt
 
 rm -rf *.tab sigPoints-cmds.txt
 rm -rf splitChr/
+
+echo "Done!"

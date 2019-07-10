@@ -37,6 +37,8 @@ elif grep -q ':' func-names.txt; then
 	exit 0
 fi
 
+
+echo "Generating files to use..."
 ##--*--## PRODUCE FILES TO USE ####
 # total number of genes for each function (as a reference for the test)
 cat gene-func.txt | sed 's/,/ /g'|awk -v OFS='\t' '{for (i=2;i<=NF;i++) print $1,$i}'|sort -u| awk '{print $2}'| sort | uniq -c | awk '{print $2, $1}'| sort > func-reference.txt
@@ -44,7 +46,7 @@ cat gene-func.txt | sed 's/,/ /g'|awk -v OFS='\t' '{for (i=2;i<=NF;i++) print $1
 sort gene-chr-start.txt | join -a1 - gene-func.txt > gene-chr-func.txt
 
 
-
+echo "Making sliding windows on chromosomes..."
 ##--*--## MAKE SLIDING GENE WINDOWS ####
 # split gene chrom file into each chromosome
 for i in $(awk '{print $2}' gene-chr-start.txt | sort -u); do grep $i gene-chr-start.txt > $i.txt; done
@@ -57,7 +59,7 @@ for i in $(awk '{print $1}' chr-length.txt); do ./1_Sliding_Window.sh $i.txt $1 
 find . -size  0 -print0 |xargs -0 rm --
 
 
-
+echo "Testing enrichment for each sliding window..."
 ##--*--## FISHER TEST FOR EACH WINDOW AND COMPILE RESULTS ####
 for i in *.table; do Rscript 2-Fishers_Exact_Test.R $i; done
 cat FisherResults-* | grep -v anno_block | sort -k2,2 -k1,1 > fisher_enriched_raw.txt
@@ -65,12 +67,15 @@ cat FisherResults-* | grep -v anno_block | sort -k2,2 -k1,1 > fisher_enriched_ra
 #SM_V7_1.txt-110	PF00001:7tm_1	5	91	95	9708	0.0028	0.2212	0.21	0.04424
 rm -f *.table 
 
+
+echo "Compiling test results and plotting clusters..."
 # select clusters with most genes, need manual check for duplicates and multiple clusters
 ## get the key string in the chr name, eg. HMN, SM
 KEYP=$(awk '(NR==1){print substr($1, 1, 3)}' chr-length.txt)
 cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1| sed 's/\./ /' | awk '{print $3 "-" $1, $1 "." $2 "#" $4 "#" $11}' | awk '$1!=p{if(p)print s; p=$1; s=$0; next}{sub(p,x); s=s $0} END{print s}' | awk '{print $1, $NF}' | sed "s/-$KEYP/ $KEYP/" |sed 's/#/ /g' | awk '{print $3, $1, $4, $5}'| sort > fisher_enriched_sliding.txt
 # block_file function genes fdr
 #SM_V7_1.txt-0 PF00169:PH 3 3e-04
+
 
 ##--*--## PLOT CHROMOSOMES AND CLUSTERS ####
 # get coordinates of first and last genes in each cluster
@@ -92,8 +97,9 @@ Rscript 3-cluster_geneCounts.R plot_func-clusters_sliding.txt
 rm -rf *.tab sigPoints-cmds.txt get_clusterGenes.cmds
 #rm -rf slidingChr/
 
+echo "Done!"
 
 # check if multiple clusters on the same chromosome are omitted
-echo "Multiple clusters from the non-sliding approach:"
+echo "Check multiple clusters from the non-sliding approach:"
 cat plot_func-clusters_nonsliding.txt | awk '{print $1 "_" $3}'| sort | uniq -c | awk '$1>1'
 #cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1 | grep [func] | grep [chr] ... > sliding_2.txt
