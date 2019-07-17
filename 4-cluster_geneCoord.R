@@ -2,9 +2,10 @@
 library(ggplot2)
 library(ggrepel)
 args = commandArgs(trailingOnly=TRUE)
+chrlen<-read.delim("chr-length.txt", sep=" ", header=F, col.names=c("chr", "length"))
 segmsall<-read.delim(args[1], sep=" ", header = F, col.names=c("chr", "block", "func","name", "genes","fdr", "start", "end", "chrlen"))
 # longest chr
-maxchr<-(max(segmsall$chrlen)+2000000)/1000000
+maxchr<-(max(chrlen$length)+2000000)/1000000
 segms<-segmsall[which(segmsall$genes>=3),]
 #barplot(chrlen$len/1000000, horiz=TRUE, names.arg=c(1:7, "ZW"), col="white", xlab="Length (Mb)", xlim=c(0, 100))
 pdf(file=paste0(args[1], "_coord.pdf"),width = 11.7, height = 6.3)

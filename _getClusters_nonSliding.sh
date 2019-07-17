@@ -84,7 +84,7 @@ cat *.tab | sed 's/-/ /' | sort | join - chr-length.txt > plot_func-clusters_non
 # plot with gene counts in each cluster
 #Rscript 3-cluster_geneCounts.R plot_func-clusters_sliding.txt
 # plot with gene coordinates of each cluster
-Rscript 4-cluster_geneCoord.R plot_func-clusters_sliding.txt
+Rscript 4-cluster_geneCoord.R plot_func-clusters_nonsliding.txt
 
 rm -rf *.tab sigPoints-cmds.txt
 rm -rf splitChr/
