@@ -28,7 +28,7 @@ PF00001	7tm_1
 PF00002	7tm_2
 ~~~~~~
 
-#### 4. chr-length.txt (chromosome lengths for plotting)
+#### 4. chr-length.txt (chromosome lengths for plotting, seprated by " ")
 
 ~~~~~~
 SM_V7_1 88881357
@@ -36,11 +36,11 @@ SM_V7_2 48130368
 ...
 ~~~~~~
 
-## Enrichment without sliding blocks
+## Enrichment without sliding windows
 
 To get significantly enriched clusters for each block, run 
 
-    ./getClusters_nonSliding.sh [BLOCKSIZE]
+    ./getClusters_nonSliding.sh [WINDOWSIZE]
 
 #### Output files:
 
@@ -48,11 +48,11 @@ To get significantly enriched clusters for each block, run
 - plot_func-clusters_nonsliding.txt (Significantly enriched functions: FDR<0.05, at least 3 genes)
 - plot_func-clusters_nonsliding.txt.pdf (chromosome plots with significant clusters)
 
-## Enrichment with sliding blocks
+## Enrichment with sliding windows
 
-Using 50-gene blocks with sliding 5-genes. Run 
+Using 50-gene window with stepping 5-genes. Run 
 
-    ./getClusters_Sliding.sh [WINDOWSIZE] [SLIDINGSIZE]
+    ./getClusters_Sliding.sh [WINDOWSIZE] [STEPSIZE]
 
 #### Output files:
 
