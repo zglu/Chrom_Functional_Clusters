@@ -72,7 +72,7 @@ echo "Compiling test results and plotting clusters..."
 # select clusters with most genes, need manual check for duplicates and multiple clusters
 ## get the key string in the chr name, eg. HMN, SM
 KEYP=$(awk '(NR==1){print substr($1, 1, 3)}' chr-length.txt)
-cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1| sed 's/\./ /' | awk '{print $3 "-" $1, $1 "." $2 "#" $4 "#" $11}' | awk '$1!=p{if(p)print s; p=$1; s=$0; next}{sub(p,x); s=s $0} END{print s}' | awk '{print $1, $NF}' | sed "s/-$KEYP/ $KEYP/" |sed 's/#/ /g' | awk '{print $3, $1, $4, $5}'| sort > fisher_enriched_sliding.txt
+cat fisher_enriched_raw.txt |sed 's/txt-/txt /' |sort -k3,3 -k1,1 -k4,4n| sed 's/\./ /' | awk '{print $4 "-" $1, $1 "." $2 "-" $3 "#" $5 "#" $12}' | awk '$1!=p{if(p)print s; p=$1; s=$0; next}{sub(p,x); s=s $0} END{print s}' | awk '{print $1, $NF}' | sed "s/-$KEYP/ $KEYP/" |sed 's/#/ /g' | awk '{print $3, $1, $4, $5}'| sort > fisher_enriched_sliding.txt
 # block_file function genes fdr
 #SM_V7_1.txt-0 PF00169:PH 3 3e-04
 
@@ -102,4 +102,7 @@ echo "Done!"
 # check if multiple clusters on the same chromosome are omitted
 echo "Check multiple clusters from the non-sliding approach:"
 cat plot_func-clusters_nonsliding.txt | awk '{print $1 "_" $3}'| sort | uniq -c | awk '$1>1'
-#cat fisher_enriched_raw.txt | sort -k2,2 -k3,3n -k1,1 | grep [func] | grep [chr] ... > sliding_2.txt
+#cat fisher_enriched_raw.txt | sed 's/txt-/txt /' |sort -k3,3 -k1,1 -k4,4n |sort -nk2| awk '{print $1 "-" $2, $3, $4, $NF}' | grep [func] | grep [chr] ... > sliding_2.txt
+
+# >1 clusters in the same chromosome
+# cat fisher_enriched_sliding.txt | sed 's/\./ /'| awk '{print $1 "-" $3}'| sort | uniq -c | awk '$1>1'
