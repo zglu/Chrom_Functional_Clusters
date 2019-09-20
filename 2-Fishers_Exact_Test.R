@@ -23,5 +23,6 @@ expotable$Holm <- p.adjust(expotable$p_value, method = "holm")
 expotable$FDR <- p.adjust(expotable$p_value, method = "BH") # Benjamini & Hochberg
 #expotable$FDR<-NULL # drop a column
 #expotable<-expotable[order(expotable$FDR),]
-expotable<-expotable[ which(expotable$FDR<0.05 & expotable$anno_block>2),]
+#expotable<-expotable[ which(expotable$FDR<0.05 & expotable$anno_block>2),]
+expotable<-subset(expotable, (as.numeric(expotable[,"FDR"])<0.05 | grepl("<", expotable[,"FDR"])) & (expotable[,"anno_block"]>2))
 write.table(expotable, file=paste0("FisherResults-", args[1]), row.names = F, sep="\t", quote = F)
