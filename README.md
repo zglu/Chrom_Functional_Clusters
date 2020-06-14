@@ -36,7 +36,7 @@ SM_V7_2 48130368
 ...
 ~~~~~~
 
-## Enrichment without sliding windows
+## 1. Enrichment without sliding windows
 
 To get significantly enriched clusters for each block, run 
 
@@ -48,7 +48,9 @@ To get significantly enriched clusters for each block, run
 - plot_func-clusters_nonsliding.txt (Significantly enriched functions: FDR<0.05, at least 3 genes)
 - plot_func-clusters_nonsliding.txt.pdf (chromosome plots with significant clusters)
 
-## Enrichment with sliding windows
+
+
+## 2. Enrichment with sliding windows
 
 Using 50-gene window with stepping 5-genes. Run 
 
@@ -66,4 +68,9 @@ Note that the current script is not perfect to choose the cluster with most gene
 ## Output plots
 
 - 3-cluster_geneCounts.R: plot the gene counts in each cluster as a bar
+
+![geneCounts](example_cluster_geneCounts.png)
+
 - 4-cluster_geneCoord.R: plot clusters with start coordinates of the first and last genes. Shown as coloured blocks.
+
+![geneCoord](example_cluster_geneCoord.png)
