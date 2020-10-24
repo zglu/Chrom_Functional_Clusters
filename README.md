@@ -1,5 +1,7 @@
 # Chrom_Functional_Clusters
-A little script to find enriched functional clusters (pfam/ipr/gene family etc) on chromosomes, eg. fist to make 50-gene blocks, and test in each block functional enrichment compared to all genes.
+A little script to find enriched functions (pfam/ipr/gene family etc) on chromosomes, eg. fist to make 50-gene windows, and test in each window functional enrichment compared to all genes.
+
+NOTE: the funcitonal genes are not necessarily adjacent for their gene orders.
 
 ## Input files
 

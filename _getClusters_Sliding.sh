@@ -8,7 +8,7 @@
 
 ##--*--## INPUT FILES ####
 #1 gene-chr-start.txt	gene chromosome start_coord (only for chromosomes)
-# !!!sorted by chr and coord
+# !!!sorted by chr and coord: sort -k1,1 -k3,3n
 # Smp_329140 SM_V7_1 88327
 
 #2 gene-func.txt	gene and function annotations
